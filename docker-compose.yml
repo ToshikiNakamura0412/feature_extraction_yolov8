@@ -1,0 +1,32 @@
+services:
+  ws:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ipc: host
+    tty: true
+    privileged: true
+    environment:
+      DISPLAY: $DISPLAY
+      TERM: screen-256color
+      LANG: C.UTF-8
+      NVIDIA_DRIVER_CAPABILITIES: all
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+      - type: bind
+        source: cpp
+        target: /home/user/ws/cpp
+      - type: bind
+        source: py
+        target: /home/user/ws/py
+    working_dir: /home/user/ws
+    command: /bin/bash
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
